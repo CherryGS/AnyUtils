@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "anyutils"
+version = "0.1.0"
+description = ""
+authors = ["CherryGS <tickten@outlook.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{ include = "anyutils" }]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+rich = "^13.5.0"
+regex = "^2023.6.3"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
