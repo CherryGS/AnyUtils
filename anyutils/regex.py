@@ -4,15 +4,15 @@ from typing import Callable, Iterable
 import regex as re
 
 
-def regex_info(text: Iterable[str], patt: Iterable[str]):
+def regex_info(text: Iterable, patt: Iterable[str]):
     """根据所给 `patt` 并行进行正则匹配"""
     ress: list[list[Future[re.Match[str] | None]]] = list()
     res: list[list[str | None]] = list()
     with ThreadPoolExecutor() as exec:
         for i in text:
-            r = [exec.submit(re.search, j, i, concurrent=True) for j in patt]
+            r = [exec.submit(re.search, j, str(i), concurrent=True) for j in patt]
             ress.append(r)
-    res = [[None if j.result() is None else j.result().group() for j in i] for i in ress] # type: ignore
+    res = [[None if j.result() is None else j.result().group() for j in i] for i in ress]  # type: ignore
     return res
 
 

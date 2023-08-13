@@ -241,11 +241,40 @@ def hook_exception(
 def get_env_logger_info():
     debug = os.environ.get("DEBUG")
     if debug is None:
-        return logging.INFO
-    if debug.lower() in ["debug", "dbg", "1", 1, "true", True]:
-        return logging.DEBUG
-    else:
-        return logging.INFO
+        return logging.WARNING
+    try:
+        d = int(debug)
+        match d:
+            case 0:
+                return logging.INFO
+            case d if d <= 10:
+                return logging.DEBUG
+            case d if d <= 20:
+                return logging.INFO
+            case d if d <= 30:
+                return logging.WARNING
+            case d if d <= 40:
+                return logging.ERROR
+            case d if d <= 50:
+                return logging.CRITICAL
+            case _:
+                return logging.CRITICAL
+
+    except Exception:
+        d = debug
+        match d:
+            case d if d.lower() in ["info"]:
+                return logging.INFO
+            case d if d.lower() in ["debug"]:
+                return logging.DEBUG
+            case d if d.lower() in ["warnning"]:
+                return logging.WARNING
+            case d if d.lower() in ["error"]:
+                return logging.ERROR
+            case d if d.lower() in ["critical"]:
+                return logging.CRITICAL
+            case _:
+                return logging.CRITICAL
 
 
 def get_rich_logger(name: str = ""):
