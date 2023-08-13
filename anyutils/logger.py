@@ -246,3 +246,12 @@ def get_env_logger_info():
         return logging.DEBUG
     else:
         return logging.INFO
+
+
+def get_rich_logger(name: str = ""):
+    """初始化一个配备了 `RichHandler` 且 level 为环境变量 `debug` 的 logger"""
+    logger = logging.getLogger(name)
+    hdlr = RichCustomHandler(get_env_logger_info())
+    hdlr.setFormatter(console_formatter)
+    logger.addHandler(hdlr)
+    return logger
