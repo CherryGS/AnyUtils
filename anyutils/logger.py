@@ -153,20 +153,23 @@ class RichFileHandler(RichHandler):
         )
 
     @classmethod
-    def quick(cls, log_path: Path, cycle: int = 0):
+    def quick(
+        cls, log_path: Path, cycle: int = 0, base_name: str = "", siz: float = 10
+    ):
         """
-        快速创建一个 FileHandler , console 应该不会被 gc 干掉的吧
+        快速创建一个带循环的 FileHandler
+
         """
         if cycle <= 0:
-            log = log_path / f"{date.today()}_main_0.log"
+            log = log_path / f"{base_name}_{date.today()}_0.log"
         else:
             log = log_path
             for i in range(cycle):
-                log = log_path / f"{date.today()}_main_{i}.log"
-                if os.path.getsize(log) / 1024 / 1024 < 10:
+                log = log_path / f"{base_name}_{date.today()}_{i}.log"
+                if os.path.getsize(log) / 1024 / 1024 < siz:
                     break
-            if os.path.getsize(log) / 1024 / 1024 < 10:
-                log = log_path / f"{date.today()}_main_{0}.log"
+            if os.path.getsize(log) / 1024 / 1024 < siz:
+                log = log_path / f"{base_name}_{date.today()}_{0}.log"
                 os.remove(log)
         f = open(log, "a+", encoding="utf8")
         console = Console(file=f)
@@ -277,10 +280,10 @@ def get_env_logger_info():
                 return logging.CRITICAL
 
 
-def get_rich_logger(name: str = ""):
+def get_rich_logger(name: str = "", debug: bool = True):
     """初始化一个配备了 `RichHandler` 且 level 为环境变量 `debug` 的 logger"""
     logger = logging.getLogger(name)
-    hdlr = RichCustomHandler(get_env_logger_info())
+    hdlr = RichRecordHandler("debug" if debug else "info")
     hdlr.setFormatter(console_formatter)
     logger.addHandler(hdlr)
     return logger
